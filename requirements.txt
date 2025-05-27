@@ -1,1 +1,6 @@
-fastapi\nuvicorn
+fastapi
+uvicorn
+openai
+langchain
+pandas
+
