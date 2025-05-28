@@ -27,16 +27,14 @@ async def leer_raiz():
         <input name="archivos" type="file" multiple>
         <input type="submit" value="Subir">
     </form>
+    <p><i>Puedes mantener pulsado Ctrl (o Cmd en Mac) para seleccionar múltiples archivos.</i></p>
     """
 
 @app.post("/subir")
 async def subir_archivos(archivos: list[UploadFile] = File(...)):
+    mensajes = []
     for archivo in archivos:
         contenido = await archivo.read()
-        s3.upload_fileobj(
-            Fileobj=contenido.__class__(contenido),
-            Bucket=bucket_name,
-            Key=archivo.filename
-        )
-    return {"mensaje": f"{len(archivos)} archivo(s) subido(s) correctamente a S3"}
-
+        s3.put_object(Bucket=bucket_name, Key=archivo.filename, Body=contenido)
+        mensajes.append(f"Archivo {archivo.filename} subido correctamente a S3")
+    return {"mensajes": mensajes}
