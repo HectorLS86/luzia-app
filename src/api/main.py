@@ -1,6 +1,8 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse
 import os
+import os
+bucket_name = os.getenv("AWS_BUCKET_NAME")
 
 app = FastAPI()
 
