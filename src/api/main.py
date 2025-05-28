@@ -13,7 +13,7 @@ aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 # Configurar el cliente S3
 s3 = boto3.client(
-    's3',
+    "s3",
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
     region_name=region
@@ -22,7 +22,7 @@ s3 = boto3.client(
 @app.get("/", response_class=HTMLResponse)
 async def leer_raiz():
     return """
-    <h1>Bienvenido a Luzia!</h1>
+    <h1>¡Bienvenido a Luzia!</h1>
     <form action="/subir" enctype="multipart/form-data" method="post">
         <input name="archivos" type="file" multiple>
         <input type="submit" value="Subir">
@@ -31,10 +31,12 @@ async def leer_raiz():
 
 @app.post("/subir")
 async def subir_archivos(archivos: list[UploadFile] = File(...)):
-    mensajes = []
     for archivo in archivos:
         contenido = await archivo.read()
-        s3.put_object(Bucket=bucket_name, Key=archivo.filename, Body=contenido)
-        mensajes.append(f"Archivo {archivo.filename} subido correctamente a S3!")
-    return {"mensajes": mensajes}
+        s3.upload_fileobj(
+            Fileobj=contenido.__class__(contenido),
+            Bucket=bucket_name,
+            Key=archivo.filename
+        )
+    return {"mensaje": f"{len(archivos)} archivo(s) subido(s) correctamente a S3"}
 
