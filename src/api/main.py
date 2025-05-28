@@ -22,12 +22,29 @@ s3 = boto3.client(
 @app.get("/", response_class=HTMLResponse)
 async def leer_raiz():
     return """
-    <h1>¡Bienvenido a Luzia!</h1>
-    <form action="/subir" enctype="multipart/form-data" method="post">
-        <input name="archivos" type="file" multiple>
-        <input type="submit" value="Subir">
-    </form>
-    <p><i>Puedes mantener pulsado Ctrl (o Cmd en Mac) para seleccionar múltiples archivos.</i></p>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Bienvenido a Luzia</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-light">
+        <div class="container py-5">
+            <h1 class="text-center mb-4">🌟 Bienvenido a Luzia 🌟</h1>
+            <div class="card p-4 shadow-sm">
+                <form action="/subir" enctype="multipart/form-data" method="post">
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Selecciona los archivos:</label>
+                        <input name="archivos" id="archivos" type="file" class="form-control" multiple>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Subir archivos</button>
+                </form>
+            </div>
+            <p class="text-center mt-3"><i>Puedes mantener pulsado Ctrl (o Cmd en Mac) para seleccionar múltiples archivos.</i></p>
+        </div>
+    </body>
+    </html>
     """
 
 @app.post("/subir")
@@ -36,5 +53,5 @@ async def subir_archivos(archivos: list[UploadFile] = File(...)):
     for archivo in archivos:
         contenido = await archivo.read()
         s3.put_object(Bucket=bucket_name, Key=archivo.filename, Body=contenido)
-        mensajes.append(f"Archivo {archivo.filename} subido correctamente a S3")
+        mensajes.append(f"{archivo.filename} subido correctamente a S3!")
     return {"mensajes": mensajes}
