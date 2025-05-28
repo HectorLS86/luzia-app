@@ -3,5 +3,6 @@ uvicorn
 openai
 langchain
 pandas
+python-multipart
 
 
