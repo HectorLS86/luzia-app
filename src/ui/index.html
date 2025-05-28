@@ -1,1 +1,31 @@
-<html><body><h1>Luzia</h1><p>Interfaz básica</p></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Luzia: Gestión de Documentos</title>
+</head>
+<body>
+    <h1>Luzia: Subida de Facturas y Recetas</h1>
+    <form id="uploadForm">
+        <input type="file" name="file" multiple>
+        <button type="submit">Subir Documentos</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const files = e.target.file.files;
+            const formData = new FormData();
+            for (const file of files) {
+                formData.append('files', file);
+            }
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(result);
+        });
+    </script>
+</body>
+</html>
