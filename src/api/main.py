@@ -22,17 +22,19 @@ s3 = boto3.client(
 @app.get("/", response_class=HTMLResponse)
 async def leer_raiz():
     return """
-    <h1>Bienvenido a Luzia</h1>
+    <h1>Bienvenido a Luzia!</h1>
     <form action="/subir" enctype="multipart/form-data" method="post">
-    <input name="archivo" type="file">
-    <input type="submit" value="Subir">
+        <input name="archivos" type="file" multiple>
+        <input type="submit" value="Subir">
     </form>
     """
 
 @app.post("/subir")
-async def subir_archivo(archivo: UploadFile = File(...)):
-    contenido = await archivo.read()
-    # Subir el archivo a S3
-    s3.put_object(Bucket=bucket_name, Key=archivo.filename, Body=contenido)
-    return {"mensaje": f"Archivo {archivo.filename} subido correctamente a S3!"}
+async def subir_archivos(archivos: list[UploadFile] = File(...)):
+    mensajes = []
+    for archivo in archivos:
+        contenido = await archivo.read()
+        s3.put_object(Bucket=bucket_name, Key=archivo.filename, Body=contenido)
+        mensajes.append(f"Archivo {archivo.filename} subido correctamente a S3!")
+    return {"mensajes": mensajes}
 
