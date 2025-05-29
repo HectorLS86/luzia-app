@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 import boto3
 import os
 
-# Importar el router de voz u otros módulos que quieras integrar en el futuro
-from .routersvoice import router as router_voice
+# Importar router de voz preparado
+from src.api.routersvoice import router as router_voice
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ s3 = boto3.client(
     region_name=region
 )
 
-# Incluir el router de voz (u otros routers)
+# Incluir router de voz (vacío por ahora, preparado para el futuro)
 app.include_router(router_voice)
 
 @app.get("/", response_class=HTMLResponse)
@@ -36,57 +36,14 @@ async def main():
         <title>Subida de Archivos a Luzia</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f8f9fa;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-            }
-            .container {
-                background-color: #fff;
-                padding: 20px 40px;
-                border-radius: 15px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                text-align: center;
-                max-width: 400px;
-                width: 90%;
-            }
-            h1 {
-                color: #9c7e3c; /* Dorado elegante */
-            }
-            .logo {
-                width: 100px;
-                margin-bottom: 15px;
-            }
-            input[type="file"] {
-                margin: 10px 0;
-            }
-            button {
-                background-color: #3ca776; /* Verde suave */
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 25px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                font-size: 16px;
-            }
-            button:hover {
-                background-color: #2e8b5e;
-            }
-            @media (max-width: 600px) {
-                .container {
-                    padding: 15px 20px;
-                }
-                .logo {
-                    width: 80px;
-                }
-            }
+            body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+            .container { background-color: #fff; padding: 20px 40px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; }
+            h1 { color: #9c7e3c; }
+            .logo { width: 100px; margin-bottom: 15px; }
+            input[type="file"] { margin: 10px 0; }
+            button { background-color: #3ca776; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; transition: background-color 0.3s; font-size: 16px; }
+            button:hover { background-color: #2e8b5e; }
+            @media (max-width: 600px) { .container { padding: 15px 20px; } .logo { width: 80px; } }
         </style>
     </head>
     <body>
@@ -99,7 +56,6 @@ async def main():
             </form>
             <p id="status"></p>
         </div>
-
         <script>
             async function uploadFiles() {
                 const formData = new FormData();
@@ -107,12 +63,7 @@ async def main():
                 for (let i = 0; i < files.length; i++) {
                     formData.append("archivos", files[i]);
                 }
-
-                const response = await fetch('/subir', {
-                    method: 'POST',
-                    body: formData
-                });
-
+                const response = await fetch('/subir', { method: 'POST', body: formData });
                 const result = await response.json();
                 document.getElementById('status').innerHTML = "<span style='color:green;font-weight:bold'>✅ Archivos subidos correctamente a S3</span>";
             }
