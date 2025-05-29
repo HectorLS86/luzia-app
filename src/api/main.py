@@ -3,6 +3,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 import boto3
 import os
 
+# Importar el router de voz u otros módulos que quieras integrar en el futuro
+from .routersvoice import router as router_voice
+
 app = FastAPI()
 
 # Configurar variables AWS desde entorno
@@ -18,6 +21,9 @@ s3 = boto3.client(
     aws_secret_access_key=aws_secret_access_key,
     region_name=region
 )
+
+# Incluir el router de voz (u otros routers)
+app.include_router(router_voice)
 
 @app.get("/", response_class=HTMLResponse)
 async def main():
