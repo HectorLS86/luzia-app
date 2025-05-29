@@ -3,9 +3,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 import boto3
 import os
 
-# Importar router de voz preparado
-from .routersvoice import router as router_voice
-from . import main_router  # <--- Cambiado a importación relativa
+# Importar router de voz preparado y main_router con import absoluto
+from src.api.routersvoice import router as router_voice
+from src.api import main_router
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ s3 = boto3.client(
 
 # Incluir routers
 app.include_router(router_voice)
-app.include_router(main_router.router)  # Asegúrate de incluir el router principal
+app.include_router(main_router.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def main():
